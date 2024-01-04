@@ -31,8 +31,14 @@ pipeline {
             }
         }
         stage('Log into Nexus Repo') {
-            steps {
-                sh 'docker login --username $NEXUS_USER --password $NEXUS_PASSWORD $NEXUS_REPO'
+          steps {
+            script {
+              // Use 'withCredentials' to securely provide username and password
+              withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                // Use '--password-stdin' option to securely pass the password
+                sh "echo \$NEXUS_PASSWORD | docker login --username \$NEXUS_USER --password-stdin \$NEXUS_REPO"
+                }
+              }
             }
         }
         stage('Push to Nexus Repo') {
