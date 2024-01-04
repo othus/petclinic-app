@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         NEXUS_USER = credentials('nexus-username')
-        NEXUS_PASSWORD = credentials('nexus')
+        NEXUS_PASSWORD = credentials('nexuspw')
         NEXUS_REPO = credentials('nexus-repo-url-prvt')
     }
     stages {
@@ -34,7 +34,7 @@ pipeline {
           steps {
             script {
               // Use 'withCredentials' to securely provide username and password
-              withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+              withCredentials([usernamePassword(credentialsId: 'nexuspw', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
                 // Use '--password-stdin' option to securely pass the password
                 sh "echo \$NEXUS_PASSWORD | docker login --username \$NEXUS_USER --password-stdin \$NEXUS_REPO"
                 }
