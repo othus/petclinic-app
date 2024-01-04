@@ -43,18 +43,18 @@ pipeline {
         stage('Deploy to stage') {
             steps {
                 sshagent(['ansible-key']) {
-                    sh 'ssh -t -t ec2-user@10.0.1.152 -o strictHostKeyChecking=no "cd /etc/ansible && ansible-playbook -i /etc/ansible/stage-hosts stage-env-playbook.yml"'
+                    sh 'ssh -t -t ec2-user@10.0.1.139 -o strictHostKeyChecking=no "cd /etc/ansible && ansible-playbook -i /etc/ansible/stage-hosts stage-env-playbook.yml"'
                 }
             }
         }
-        stage('slack notification') {
-            steps {
-                slackSend channel: 'jenkins-alert',
-                message: 'App deployed to Stage, needs approval to deploy to prod',
-                teamDomain: 'paceu1',
-                tokenCredentialId: 'slack-credentials'
-            }
-        }
+        //stage('slack notification') {
+        //    steps {
+        //        slackSend channel: 'jenkins-alert',
+        //        message: 'App deployed to Stage, needs approval to deploy to prod',
+        //        teamDomain: 'paceu1',
+        //        tokenCredentialId: 'slack-credentials'
+        //    }
+        //}
         stage('Request for Approval') {
             steps {
                 timeout(activity: true, time: 10) {
@@ -65,7 +65,7 @@ pipeline {
         stage('Deploy to prod') {
             steps {
                 sshagent(['ansible-key']) {
-                    sh 'ssh -t -t ec2-user@10.0.1.152 -o strictHostKeyChecking=no "cd /etc/ansible && ansible-playbook -i /etc/ansible/prod-hosts prod-env-playbook.yml"'
+                    sh 'ssh -t -t ec2-user@10.0.1.139 -o strictHostKeyChecking=no "cd /etc/ansible && ansible-playbook -i /etc/ansible/prod-hosts prod-env-playbook.yml"'
                 }
             }
         }
